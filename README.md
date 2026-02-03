@@ -4,7 +4,7 @@
 This repository provides the **trained model** designed for Search and Rescue (SAR), emergency response, and robotic perception scenarios.
 
 ---
-<img width="956" height="720" alt="detecion_" src="https://github.com/user-attachments/assets/cba74321-e312-4942-bbf9-80bfe948e20a" width="30%"/>
+<img width="956" height="720" alt="detecion_" src="https://github.com/user-attachments/assets/cba74321-e312-4942-bbf9-80bfe948e20a" width="15%"/>
 
 ## 📌 Overview
 
