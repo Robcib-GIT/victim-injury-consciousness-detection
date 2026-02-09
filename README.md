@@ -65,7 +65,7 @@ To improve generalization and fairness, AI-based generation techniques were used
 
 The trained model and associated resources are publicly available via Zenodo:
 
-👉 https://zenodo.org/records/18468797
+👉 https://zenodo.org/records/18554108
 
 ---
 
