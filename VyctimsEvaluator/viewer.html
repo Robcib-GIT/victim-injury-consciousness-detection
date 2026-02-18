@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>WebSocket JPEG Viewer</title>
+  <style>
+    html, body { height:100%; margin:0; background:#111; color:#ddd; font:14px system-ui, sans-serif; }
+    #wrap { display:flex; flex-direction:column; height:100%; }
+    header { padding:8px 12px; background:#1a1a1a; display:flex; gap:12px; align-items:center; }
+    #status { padding:2px 8px; border-radius:999px; background:#333; }
+    #fps { opacity:0.8; }
+    #img { max-width:100%; max-height:calc(100vh - 44px); object-fit:contain; background:#000; }
+    input[type="text"] { width:360px; background:#222; border:1px solid #333; color:#ddd; padding:6px 8px; border-radius:6px; }
+    button { background:#2b5; border:none; color:#111; padding:6px 10px; border-radius:6px; cursor:pointer; }
+    button:disabled { background:#444; color:#888; cursor:not-allowed; }
+  </style>
+</head>
+<body>
+  <div id="wrap">
+    <header>
+      <label>WS URL:
+        <input id="url" type="text" value="ws://127.0.0.1:8765/stream">
+      </label>
+      <button id="connect">Connect</button>
+      <span id="status">disconnected</span>
+      <span id="fps">— fps</span>
+    </header>
+    <img id="img" alt="stream will appear here">
+  </div>
+
+  <script>
+    let ws = null;
+    let lastURL = null;
+    let frames = 0, lastTS = performance.now();
+
+    const statusEl = document.getElementById('status');
+    const fpsEl = document.getElementById('fps');
+    const imgEl = document.getElementById('img');
+    const urlEl = document.getElementById('url');
+    const btn = document.getElementById('connect');
+
+    function setStatus(s) { statusEl.textContent = s; }
+
+    function connect(url) {
+      if (ws) ws.close();
+      setStatus('connecting…');
+      btn.disabled = true;
+
+      ws = new WebSocket(url);
+      ws.binaryType = 'blob';  // receive JPEG as Blob
+
+      ws.onopen = () => {
+        lastURL = url;
+        setStatus('connected');
+        btn.textContent = 'Disconnect';
+        btn.disabled = false;
+      };
+
+      ws.onmessage = (ev) => {
+        // Create (and later revoke) an object URL for this JPEG blob
+        const blobURL = URL.createObjectURL(new Blob([ev.data], { type: 'image/jpeg' }));
+        // Swap image source; revoke previous object URL (if any) to avoid leaks
+        const oldURL = imgEl.src;
+        imgEl.src = blobURL;
+        if (oldURL?.startsWith('blob:')) URL.revokeObjectURL(oldURL);
+
+        // FPS counter
+        frames++;
+        const now = performance.now();
+        if (now - lastTS >= 1000) {
+          fpsEl.textContent = Math.round(frames * 1000 / (now - lastTS)) + ' fps';
+          frames = 0; lastTS = now;
+        }
+      };
+
+      ws.onclose = () => {
+        setStatus('disconnected');
+        btn.textContent = 'Connect';
+        btn.disabled = false;
+        // Optional auto-reconnect
+        if (lastURL && lastURL === url) {
+          setStatus('reconnecting in 1s…');
+          setTimeout(() => connect(url), 1000);
+        }
+      };
+
+      ws.onerror = (e) => {
+        console.error('ws error', e);
+        setStatus('error (see console)');
+      };
+    }
+
+    btn.addEventListener('click', () => {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.close();
+      } else {
+        connect(urlEl.value.trim());
+      }
+    });
+  </script>
+</body>
+</html>
+

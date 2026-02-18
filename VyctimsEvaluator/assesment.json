@@ -1,0 +1,11 @@
+{
+  "start_condition": "health_assessment",
+
+  "health_assessment": {
+    "question": "Analyze ONLY the labeled person in the image and generate a brief health assessment based on visible appearance. Evaluate whether the person appears conscious or unconscious (eye opening, facial expression, purposeful movement), whether there are visible injuries (bleeding, wounds, deformities), whether the person appears to be breathing (chest movement), and any other visible signs of distress or medical concern. Base your answer only on what is visually observable and avoid speculation beyond the image. Provide a short, objective description.",
+    "choices": ["assessment"],
+    "outcomes": {
+      "assessment": { "continue": false }
+    }
+  }
+}

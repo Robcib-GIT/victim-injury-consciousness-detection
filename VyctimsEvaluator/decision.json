@@ -1,0 +1,33 @@
+{
+  "start_condition": "position",
+
+  "position": {
+    "question": "Look only at the labeled person. What is the main body position of this person right now? Choose the closest option.",
+    "choices": ["walking", "standing", "sitting", "lying"],
+    "outcomes": {
+      "walking": { "triage": "green", "continue": false },
+      "standing": { "triage": "green", "continue": false },
+      "sitting": { "continue": true, "next": "breathing_check" },
+      "lying": { "continue": true, "next": "breathing_check" }
+    }
+  },
+  "breathing_check": {
+    "question": "Does the person show visible signs of breathing (chest movement)?",
+    "choices": ["yes", "no", "uncertain"],
+    "outcomes": {
+      "yes": { "continue": true, "next": "consciousness_check" },
+      "no": { "triage": "red", "continue": false },
+      "uncertain": { "continue": true, "next": "consciousness_check" }
+    }
+  },
+  "consciousness_check": {
+    "question": "Does the person show any signs of consciousness, such as eye movement, facial expressions, or purposeful movements?",
+    "choices": ["yes", "no", "uncertain"],
+    "outcomes": {
+      "yes": { "triage": "yellow", "continue": false },
+      "no": { "triage": "red", "continue": false },
+      "uncertain": { "triage": "yellow", "continue": false }
+    }
+  }
+}
+

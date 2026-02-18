@@ -1,0 +1,92 @@
+{
+  "start_condition": "position",
+
+  "position": {
+    "question": "Look only at the labeled person. What is the main body position of this person right now? Choose the closest option.",
+    "choices": ["walking", "standing", "sitting", "lying", "kneeling", "crouching", "slouching"],
+    "outcomes": {
+      "walking": { "triage": "green", "continue": false },
+      "standing": { "triage": "green", "continue": false },
+      "sitting": { "continue": true, "next": "breathing_check" },
+      "lying": { "continue": true, "next": "breathing_check" },
+      "kneeling": { "continue": true, "next": "breathing_check" },
+      "crouching": { "continue": true, "next": "breathing_check" },
+      "slouching": { "continue": true, "next": "breathing_check" }
+    }
+  },
+ "breathing_check": {
+  "question": "Does the person show visible signs of breathing (chest movement)?",
+  "choices": ["yes", "no", "uncertain"],
+  "outcomes": {
+    "yes": { "continue": true, "next": "injury_pale_skin" },
+    "no": { "triage": "red", "continue": false },
+    "uncertain": { "continue": true, "next": "injury_pale_skin" }
+  }
+},
+
+
+  "injury_pale_skin": {
+    "question": "Does the person’s face or skin look unusually pale, gray, or lifeless compared to a healthy tone?",
+    "choices": ["yes", "no"],
+    "outcomes": {
+      "yes": { "continue": true, "next": "injury_burns" },
+      "no": { "continue": true, "next": "injury_burns" }
+    }
+  },
+
+  "injury_burns": {
+    "question": "Do you see clear burn marks, charred skin, or burned clothing on the person?",
+    "choices": ["yes", "no"],
+    "outcomes": {
+      "yes": { "continue": true, "next": "injury_choking" },
+      "no": { "continue": true, "next": "injury_choking" }
+    }
+  },
+
+  "injury_choking": {
+    "question": "Is the person holding their neck or showing a posture that suggests choking or difficulty breathing?",
+    "choices": ["yes", "no"],
+    "outcomes": {
+      "yes": { "continue": true, "next": "injury_limb" },
+      "no": { "continue": true, "next": "injury_limb" }
+    }
+  },
+
+  "injury_limb": {
+    "question": "Do you see any limb bent in an unnatural direction, missing, or clearly broken?",
+    "choices": ["yes", "no"],
+    "outcomes": {
+      "yes": { "continue": true, "next": "injury_bleeding" },
+      "no": { "continue": true, "next": "injury_bleeding" }
+    }
+  },
+
+  "injury_bleeding": {
+    "question": "Do you see fresh red liquid blood actively coming from a wound on the person? Ignore tattoos, paint, or stains.",
+    "choices": ["yes", "no"],
+    "outcomes": {
+      "yes": { "continue": true, "next": "mental_status" },
+      "no": { "continue": true, "next": "mental_status" }
+    }
+  },
+
+  "mental_status": {
+    "question": "Does the person appear conscious and alert?",
+    "choices": ["yes","no"],
+
+
+    "outcomes": {
+      "no": {
+        "triage": "red",
+        "continue": false
+     
+    },
+    "yes": {
+        "triage": "yellow",
+        "continue": false
+      }
+  }
+}
+
+}
+
